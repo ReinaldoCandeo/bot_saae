@@ -306,14 +306,14 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Hero Banner */
+/* Hero Banner - Apple Style */
 .hero-banner {
-    background: linear-gradient(135deg, var(--secondary-color), #374151);
-    color: white;
-    padding: 4rem 0;
+    background: white;
+    color: var(--text-primary);
+    padding: 3rem 0;
     position: relative;
     overflow: hidden;
-    min-height: 600px;
+    min-height: 400px;
 }
 
 .banner-background {
@@ -322,7 +322,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #1f2937, #374151);
+    background: white;
 }
 
 .banner-pattern {
@@ -331,16 +331,10 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
-    animation: float 6s ease-in-out infinite;
+    background: linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
 }
 
 .banner-content {
-    display: flex;
-    align-items: center;
-    gap: 4rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
@@ -348,118 +342,94 @@ body {
     z-index: 2;
 }
 
-.banner-text {
-    flex: 1;
-    max-width: 500px;
-}
-
-.banner-badge {
-    display: inline-block;
-    background: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-lg);
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    animation: pulse 2s infinite;
-}
-
-.banner-text h2 {
-    font-size: 3rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    line-height: 1.1;
-}
-
-.banner-text p {
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
-    color: #d1d5db;
-    line-height: 1.6;
-}
-
-.banner-buttons {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn-discover {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-discover:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-watch {
-    background: transparent;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 1rem 2rem;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-watch:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-}
-
-.banner-products {
-    display: flex;
-    gap: 30px;
-}
-
-.product-card {
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 15px;
+.banner-content-apple {
     text-align: center;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
 }
 
-.product-image {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 15px;
-    border-radius: 10px;
-    background: linear-gradient(45deg, #fbbf24, #f59e0b);
+.banner-title {
+    margin-bottom: 3rem;
 }
 
-.product-card .product-image img {
+.banner-title h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.banner-products-apple {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.product-item-apple {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    border-radius: 12px;
+    min-width: 120px;
+}
+
+.product-item-apple:hover {
+    transform: translateY(-4px);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.product-image-apple {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.product-image-apple img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 10px;
     transition: transform 0.3s ease;
 }
 
-.product-card:hover .product-image img {
+.product-item-apple:hover .product-image-apple img {
     transform: scale(1.05);
+}
+
+.icon-bag, .icon-ios {
+    font-size: 2rem;
+    color: var(--text-secondary);
+}
+
+.product-item-apple h3 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem 0;
+    line-height: 1.2;
+}
+
+.badge-novo {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ff6b35;
+    background: rgba(255, 107, 53, 0.1);
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.25rem;
 }
 
 .product-badge {
