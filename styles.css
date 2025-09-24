@@ -430,53 +430,117 @@ body {
 
 .banner-products {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 2rem 0;
 }
 
 .product-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2rem;
+    border-radius: 2rem;
     text-align: center;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    min-width: 200px;
+    min-width: 250px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.product-card:nth-child(1) {
+    animation: floatSlow 8s ease-in-out infinite;
+    animation-delay: 0s;
+}
+
+.product-card:nth-child(2) {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+.product-card:nth-child(3) {
+    animation: floatFast 7s ease-in-out infinite;
+    animation-delay: 4s;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-15px) scale(1.02);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .product-card.featured {
-    background: rgba(220, 38, 38, 0.2);
-    border-color: rgba(220, 38, 38, 0.3);
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    box-shadow: 
+        0 20px 40px rgba(220, 38, 38, 0.2),
+        0 0 0 1px rgba(220, 38, 38, 0.1);
 }
 
 .product-image {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 1rem;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(45deg, #fbbf24, #f59e0b);
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 1.5rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .product-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: var(--radius-lg);
-    transition: transform 0.3s ease;
+    border-radius: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: brightness(1.1) contrast(1.05);
 }
 
 .product-card:hover .product-image img {
-    transform: scale(1.05);
+    transform: scale(1.08) rotate(2deg);
+    filter: brightness(1.2) contrast(1.1);
+}
+
+.product-glow {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        rgba(220, 38, 38, 0.3), 
+        rgba(251, 191, 36, 0.3), 
+        rgba(59, 130, 246, 0.3), 
+        rgba(220, 38, 38, 0.3));
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+    animation: glow 3s ease-in-out infinite;
+}
+
+.product-card:hover .product-glow {
+    opacity: 1;
+}
+
+@keyframes glow {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.02);
+    }
 }
 
 .product-badge {
@@ -877,10 +941,37 @@ body {
 
 @keyframes float {
     0%, 100% {
-        transform: translateY(0px);
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-8px) rotate(0.5deg);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-15px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-8px) rotate(-0.5deg);
+    }
+}
+
+@keyframes floatSlow {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-12px) scale(1.02);
+    }
+}
+
+@keyframes floatFast {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+        transform: translateY(-6px) rotate(1deg);
+    }
+    66% {
+        transform: translateY(-10px) rotate(-1deg);
     }
 }
 
