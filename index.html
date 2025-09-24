@@ -6,21 +6,33 @@
     <title>Loja do Japão - Produtos Autênticos</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Loja do Japão - Produtos autênticos diretamente do Japão. Eletrônicos, tecnologia, gadgets e muito mais!">
+    <meta name="keywords" content="japão, produtos japoneses, eletrônicos, tecnologia, gadgets">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="logo">
-                <h1>LOJA DO JAPÃO</h1>
-                <span class="subtitle">Produtos Autênticos</span>
+                <div class="logo-icon">🎌</div>
+                <div class="logo-text">
+                    <h1>LOJA DO JAPÃO</h1>
+                    <span class="subtitle">Produtos Autênticos</span>
+                </div>
             </div>
             <div class="search-bar">
                 <input type="text" placeholder="O que você está buscando?" class="search-input">
                 <button class="search-btn"><i class="fas fa-search"></i></button>
             </div>
             <div class="user-actions">
-                <span class="welcome">Bem-vindo! <a href="#">Acessar</a> | <a href="#">Cadastre-se</a></span>
+                <div class="user-menu">
+                    <span class="welcome">Bem-vindo!</span>
+                    <div class="user-links">
+                        <a href="#" class="login-btn">Acessar</a>
+                        <a href="#" class="register-btn">Cadastre-se</a>
+                    </div>
+                </div>
                 <div class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">0</span>
@@ -69,33 +81,46 @@
 
     <!-- Hero Banner -->
     <section class="hero-banner">
+        <div class="banner-background">
+            <div class="banner-pattern"></div>
+        </div>
         <div class="banner-content">
             <div class="banner-text">
+                <div class="banner-badge">🔥 NOVO</div>
                 <h2>Lançamento iPhone 17 Series</h2>
-                <p>Os smartphones mais avançados do mundo chegaram!</p>
-                <button class="btn-discover">Conhecer todos →</button>
+                <p>Os smartphones mais avançados do mundo chegaram! Tecnologia japonesa de ponta.</p>
+                <div class="banner-buttons">
+                    <button class="btn-discover">Conhecer todos →</button>
+                    <button class="btn-watch">Assistir vídeo</button>
+                </div>
             </div>
             <div class="banner-products">
-                <div class="product-card">
+                <div class="product-card featured">
                     <div class="product-image iphone-17">
                         <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200&h=200&fit=crop" alt="iPhone 17" loading="lazy">
+                        <div class="product-badge">Novo</div>
                     </div>
                     <h3>iPhone 17</h3>
                     <p>Edição Standard</p>
+                    <div class="product-price">R$ 7.999</div>
                 </div>
                 <div class="product-card">
                     <div class="product-image iphone-17-pro">
                         <img src="https://images.unsplash.com/photo-1592899677977-9c9ca6a934ff?w=200&h=200&fit=crop" alt="iPhone 17 Pro" loading="lazy">
+                        <div class="product-badge">Pro</div>
                     </div>
                     <h3>iPhone 17 Pro</h3>
                     <p>Edição Premium</p>
+                    <div class="product-price">R$ 9.999</div>
                 </div>
                 <div class="product-card">
                     <div class="product-image iphone-17-pro-max">
                         <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=200&h=200&fit=crop" alt="iPhone 17 Pro Max" loading="lazy">
+                        <div class="product-badge">Max</div>
                     </div>
                     <h3>iPhone 17 Pro Max</h3>
                     <p>Edição Máxima</p>
+                    <div class="product-price">R$ 11.999</div>
                 </div>
             </div>
         </div>
