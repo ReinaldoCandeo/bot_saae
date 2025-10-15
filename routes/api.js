@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getConversationStats, getConversationsByPhone } = require('../database/conversations');
 const { getWebhookLogs } = require('../database/logs');
+const { getQuery } = require('../database/init');
 
 // Rota para verificar status da API
 router.get('/status', (req, res) => {
@@ -193,6 +194,217 @@ router.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
+});
+
+// Rota para analytics e estatísticas de demanda
+router.get('/analytics', async (req, res) => {
+  try {
+    const { filter = 'today' } = req.query;
+    
+    // Calcular datas baseado no filtro
+    let dateFilter = '';
+    const now = new Date();
+    
+    switch(filter) {
+      case 'today':
+        dateFilter = `AND DATE(timestamp) = DATE('now')`;
+        break;
+      case 'week':
+        dateFilter = `AND timestamp >= datetime('now', '-7 days')`;
+        break;
+      case 'month':
+        dateFilter = `AND timestamp >= datetime('now', '-30 days')`;
+        break;
+      case 'all':
+      default:
+        dateFilter = '';
+    }
+    
+    // Estatísticas gerais
+    const totalMessages = await getQuery(
+      `SELECT COUNT(*) as count FROM conversations WHERE 1=1 ${dateFilter}`
+    );
+    
+    const uniqueUsers = await getQuery(
+      `SELECT COUNT(DISTINCT phone_number) as count FROM conversations WHERE 1=1 ${dateFilter}`
+    );
+    
+    const totalAppointments = await getQuery(
+      `SELECT COUNT(*) as count FROM appointments WHERE 1=1 ${dateFilter.replace('timestamp', 'created_at')}`
+    );
+    
+    // Demanda por serviço (baseado em mensagens contendo palavras-chave)
+    const serviceKeywords = {
+      'Consulta de Conta': ['consulta', 'conta', 'btn_1'],
+      'Segunda Via': ['segunda via', 'boleto', 'btn_2'],
+      'Agendamento': ['agendamento', 'agendar', 'btn_3', 'sched_'],
+      'Fale Conosco': ['fale conosco', 'contato', 'btn_4'],
+      'Emergências': ['emergência', 'emergencia', 'urgente', 'btn_5']
+    };
+    
+    const serviceData = {
+      labels: [],
+      values: []
+    };
+    
+    for (const [service, keywords] of Object.entries(serviceKeywords)) {
+      const query = keywords.map(() => 'content LIKE ?').join(' OR ');
+      const params = keywords.map(k => `%${k}%`);
+      
+      const result = await getQuery(
+        `SELECT COUNT(*) as count FROM conversations 
+         WHERE type = 'received' AND (${query}) ${dateFilter}`,
+        params
+      );
+      
+      if (result[0].count > 0) {
+        serviceData.labels.push(service);
+        serviceData.values.push(result[0].count);
+      }
+    }
+    
+    // Agendamentos por tipo
+    const appointmentsByType = await getQuery(
+      `SELECT 
+        CASE service_type
+          WHEN 'water_connection' THEN '💧 Água'
+          WHEN 'sewage_connection' THEN '🚽 Esgoto'
+          WHEN 'maintenance' THEN '🔧 Manutenção'
+          WHEN 'inspection' THEN '🔍 Vistoria'
+          ELSE service_type
+        END as type_label,
+        COUNT(*) as count
+       FROM appointments 
+       WHERE 1=1 ${dateFilter.replace('timestamp', 'created_at')}
+       GROUP BY service_type`
+    );
+    
+    const appointmentData = {
+      labels: appointmentsByType.map(a => a.type_label),
+      values: appointmentsByType.map(a => a.count)
+    };
+    
+    // Mensagens por hora
+    const hourlyMessages = await getQuery(
+      `SELECT 
+        strftime('%H', timestamp) as hour,
+        COUNT(*) as count
+       FROM conversations 
+       WHERE type = 'received' ${dateFilter}
+       GROUP BY hour
+       ORDER BY hour`
+    );
+    
+    const hourlyData = {
+      labels: Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}h`),
+      values: Array.from({length: 24}, () => 0)
+    };
+    
+    hourlyMessages.forEach(h => {
+      hourlyData.values[parseInt(h.hour)] = h.count;
+    });
+    
+    // Mensagens por dia da semana
+    const weekdayMessages = await getQuery(
+      `SELECT 
+        CASE CAST(strftime('%w', timestamp) AS INTEGER)
+          WHEN 0 THEN 'Domingo'
+          WHEN 1 THEN 'Segunda'
+          WHEN 2 THEN 'Terça'
+          WHEN 3 THEN 'Quarta'
+          WHEN 4 THEN 'Quinta'
+          WHEN 5 THEN 'Sexta'
+          WHEN 6 THEN 'Sábado'
+        END as weekday,
+        strftime('%w', timestamp) as day_num,
+        COUNT(*) as count
+       FROM conversations 
+       WHERE type = 'received' ${dateFilter}
+       GROUP BY day_num
+       ORDER BY day_num`
+    );
+    
+    const weekdayData = {
+      labels: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+      values: [0, 0, 0, 0, 0, 0, 0]
+    };
+    
+    weekdayMessages.forEach(w => {
+      weekdayData.values[parseInt(w.day_num)] = w.count;
+    });
+    
+    // Agendamentos recentes
+    const recentAppointments = await getQuery(
+      `SELECT 
+        protocol,
+        service_type,
+        CASE service_type
+          WHEN 'water_connection' THEN '💧 Ligação de Água'
+          WHEN 'sewage_connection' THEN '🚽 Ligação de Esgoto'
+          WHEN 'maintenance' THEN '🔧 Manutenção'
+          WHEN 'inspection' THEN '🔍 Vistoria'
+          ELSE service_type
+        END as service_type_label,
+        customer_name,
+        scheduled_date,
+        status,
+        created_at
+       FROM appointments 
+       ORDER BY created_at DESC 
+       LIMIT 10`
+    );
+    
+    // Top serviços mais acessados
+    const topServices = [];
+    for (const [service, keywords] of Object.entries(serviceKeywords)) {
+      const query = keywords.map(() => 'content LIKE ?').join(' OR ');
+      const params = keywords.map(k => `%${k}%`);
+      
+      const result = await getQuery(
+        `SELECT COUNT(*) as count FROM conversations 
+         WHERE type = 'received' AND (${query}) ${dateFilter}`,
+        params
+      );
+      
+      if (result[0].count > 0) {
+        topServices.push({
+          service: service,
+          count: result[0].count
+        });
+      }
+    }
+    
+    topServices.sort((a, b) => b.count - a.count);
+    
+    // Serviço mais usado
+    const topService = topServices.length > 0 
+      ? topServices[0].service 
+      : 'Nenhum';
+    
+    res.json({
+      success: true,
+      filter: filter,
+      stats: {
+        totalMessages: totalMessages[0].count,
+        uniqueUsers: uniqueUsers[0].count,
+        totalAppointments: totalAppointments[0].count,
+        topService: topService
+      },
+      serviceData,
+      appointmentData,
+      hourlyData,
+      weekdayData,
+      recentAppointments,
+      topServices: topServices.slice(0, 10)
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro ao gerar analytics:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 module.exports = router;
