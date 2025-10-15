@@ -1,0 +1,105 @@
+🚨 ATENÇÃO: SEU NÚMERO PRECISA SER AUTORIZADO NO META! 🚨
+
+═══════════════════════════════════════════════════════════
+
+ERRO ATUAL:
+❌ "Business account is restricted from messaging users 
+    in this country."
+
+MOTIVO:
+Contas de TESTE do WhatsApp só podem enviar mensagens para 
+números PREVIAMENTE AUTORIZADOS.
+
+═══════════════════════════════════════════════════════════
+
+📍 COMO ADICIONAR SEU NÚMERO (PASSO A PASSO):
+
+1. ACESSE:
+   https://developers.facebook.com/apps
+
+2. CLIQUE:
+   No seu aplicativo WhatsApp
+
+3. NO MENU LATERAL ESQUERDO:
+   WhatsApp → Getting Started
+   (ou WhatsApp → API Setup)
+
+4. PROCURE A SEÇÃO:
+   "Step 2: Send messages with the API"
+   
+   ou
+   
+   "To" (campo Para)
+
+5. VOCÊ VAI VER ALGO ASSIM:
+
+   ┌────────────────────────────────────┐
+   │ To:                                │
+   │ ┌────────────────────────────────┐ │
+   │ │ [Phone number]                 │ │
+   │ └────────────────────────────────┘ │
+   │                                    │
+   │ [Manage phone number list]         │
+   └────────────────────────────────────┘
+
+6. DIGITE SEU NÚMERO:
+   5518996871823
+   
+   (Sem +, sem espaços, sem traços)
+
+7. CLIQUE EM:
+   "Send code" ou "Add" ou "Next"
+
+8. VERIFIQUE SEU SMS:
+   Você vai receber um código de 6 dígitos
+
+9. DIGITE O CÓDIGO:
+   No campo que apareceu
+
+10. CONFIRME:
+    Aguarde mensagem: ✅ "Phone number verified"
+
+═══════════════════════════════════════════════════════════
+
+📱 DEPOIS DE VERIFICAR:
+
+1. Envie "menu" no WhatsApp
+2. Aguarde 2-3 segundos
+3. Você VAI receber o menu com 5 botões! 🎉
+
+═══════════════════════════════════════════════════════════
+
+⚠️  IMPORTANTE:
+
+- Sem este passo, o bot NÃO vai funcionar
+- É uma limitação da conta de TESTE
+- Leva apenas 2 minutos!
+- É OBRIGATÓRIO para testar
+
+═══════════════════════════════════════════════════════════
+
+🆘 SE NÃO ENCONTRAR A OPÇÃO:
+
+Tente estas alternativas no menu do seu app:
+
+▸ WhatsApp → Getting Started
+▸ WhatsApp → API Setup  
+▸ WhatsApp → Configuration
+▸ WhatsApp → Phone Numbers
+
+Procure por:
+- "Add recipient"
+- "Manage phone number list"
+- "To" field
+- "Test numbers"
+
+═══════════════════════════════════════════════════════════
+
+💡 TESTE AGORA:
+
+Seu número: +55 18 99687-1823
+Formato para adicionar: 5518996871823
+
+Faça isso AGORA e seu bot vai funcionar! 🚀
+
+═══════════════════════════════════════════════════════════

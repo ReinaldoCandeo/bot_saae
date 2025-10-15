@@ -1,0 +1,50 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Arquivos de ambiente (contêm tokens e credenciais)
+.env
+production.env
+*.env
+
+# Sessões e cache do WhatsApp Web
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Banco de dados local
+database/*.db
+*.db
+
+# Logs
+*.log
+startup.log
+server_*.log
+bot_whatsapp.log
+server_start.log
+server_production.log
+server_final.log
+
+# Process IDs
+*.pid
+bot.pid
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Executáveis
+ngrok
+*.exe
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ZIP files
+*.zip
+
+# Ngrok
+ngrok.zip

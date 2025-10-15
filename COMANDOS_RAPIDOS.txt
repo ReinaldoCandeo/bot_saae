@@ -1,0 +1,91 @@
+🚀 ===============================================
+   COMANDOS RÁPIDOS PARA ATIVAR SEU BOT
+===============================================
+
+✅ Suas credenciais já estão configuradas!
+✅ API testada e funcionando!
+
+Agora execute estes comandos:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📍 TERMINAL 1 - Iniciar NGROK:
+
+cd /Users/reinaldocandeo/Desktop/Postman
+./ngrok http 3000
+
+⚠️  COPIE A URL QUE APARECER!
+   (algo como: https://abc123.ngrok.io)
+
+⚠️  NÃO FECHE ESTE TERMINAL!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📍 TERMINAL 2 - Atualizar .env:
+
+nano .env
+
+Encontre:
+  WEBHOOK_URL=http://localhost:3000
+
+Mude para (cole SUA URL):
+  WEBHOOK_URL=https://SUA-URL-DO-NGROK.ngrok.io
+
+Salvar: Ctrl+O, Enter, Ctrl+X
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📍 TERMINAL 2 - Iniciar Servidor:
+
+npm start
+
+⚠️  NÃO FECHE ESTE TERMINAL!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📍 NAVEGADOR - Configurar Webhook:
+
+1. Acesse: https://developers.facebook.com
+2. Seu App → WhatsApp → Configuração → Webhooks
+3. Clique em "Editar"
+
+Configure:
+
+  Callback URL:
+  https://SUA-URL-DO-NGROK.ngrok.io/webhook
+
+  Verify Token:
+  saae_bot_2024_webhook_secret
+
+4. Clique em "Verificar e salvar"
+5. Marque campo "messages"
+6. Salve
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📱 WHATSAPP - TESTAR:
+
+Envie do seu WhatsApp (5518996871823):
+
+  menu
+
+Você deve receber menu com 5 BOTÕES! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 VER LOGS:
+
+tail -f startup.log
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 PROBLEMAS?
+
+Leia: CONFIGURAR_AGORA.md
+
+cat CONFIGURAR_AGORA.md | less
+
+===============================================
+
+COMECE PELO TERMINAL 1! 👆
+

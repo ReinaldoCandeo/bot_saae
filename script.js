@@ -1,521 +1,487 @@
-// JavaScript moderno para Loja do Japão
+// Dados simulados dos tanques
+const tanksData = [
+    {
+        id: 1,
+        name: "Tanque Principal - Centro",
+        level: 85,
+        capacity: 50000,
+        location: "Centro da Cidade",
+        lastUpdate: "2 min atrás",
+        status: "normal"
+    },
+    {
+        id: 2,
+        name: "Tanque Norte",
+        level: 25,
+        capacity: 30000,
+        location: "Bairro Norte",
+        lastUpdate: "1 min atrás",
+        status: "critical"
+    },
+    {
+        id: 3,
+        name: "Tanque Sul",
+        level: 65,
+        capacity: 40000,
+        location: "Bairro Sul",
+        lastUpdate: "3 min atrás",
+        status: "warning"
+    },
+    {
+        id: 4,
+        name: "Tanque Leste",
+        level: 92,
+        capacity: 35000,
+        location: "Bairro Leste",
+        lastUpdate: "1 min atrás",
+        status: "normal"
+    },
+    {
+        id: 5,
+        name: "Tanque Oeste",
+        level: 78,
+        capacity: 45000,
+        location: "Bairro Oeste",
+        lastUpdate: "2 min atrás",
+        status: "normal"
+    }
+];
+
+// Dados históricos simulados
+const historicalData = {
+    levels: [],
+    consumption: []
+};
+
+// Inicialização
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Variáveis globais
-    let cartCount = 0;
-    let cartItems = [];
-    let isScrolling = false;
-    
-    // Elementos do DOM
-    const searchInput = document.querySelector('.search-input');
-    const searchBtn = document.querySelector('.search-btn');
-    const cartIcon = document.querySelector('.cart-icon');
-    const cartCountElement = document.querySelector('.cart-count');
-    const addToCartBtns = document.querySelectorAll('.btn-add-cart');
-    const whatsappBtn = document.querySelector('.whatsapp-btn');
-    const bannerArrow = document.querySelector('.banner-arrow');
-    const header = document.querySelector('.header');
-    
-    // Sistema de notificações melhorado
-    class NotificationSystem {
-        constructor() {
-            this.notifications = [];
-            this.createContainer();
-        }
-        
-        createContainer() {
-            this.container = document.createElement('div');
-            this.container.className = 'notification-container';
-            this.container.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            `;
-            document.body.appendChild(this.container);
-        }
-        
-        show(message, type = 'success', duration = 3000) {
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-icon">
-                        ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
-                    </div>
-                    <div class="notification-text">${message}</div>
-                    <button class="notification-close">&times;</button>
-                </div>
-            `;
-            
-            notification.style.cssText = `
-                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 0.5rem;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                max-width: 300px;
-                font-weight: 500;
-            `;
-            
-            this.container.appendChild(notification);
-            
-            // Animar entrada
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Auto remover
-            const autoRemove = setTimeout(() => {
-                this.remove(notification);
-            }, duration);
-            
-            // Botão fechar
-            const closeBtn = notification.querySelector('.notification-close');
-            closeBtn.addEventListener('click', () => {
-                clearTimeout(autoRemove);
-                this.remove(notification);
-            });
-            
-            this.notifications.push({ element: notification, timer: autoRemove });
-        }
-        
-        remove(notification) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }
-    }
-    
-    const notifications = new NotificationSystem();
-    
-    // Sistema de carrinho melhorado
-    class CartSystem {
-        constructor() {
-            this.items = JSON.parse(localStorage.getItem('cartItems')) || [];
-            this.updateCartCount();
-        }
-        
-        addItem(productName, price, image = '') {
-            const item = {
-                id: Date.now(),
-                name: productName,
-                price: price,
-                image: image,
-                quantity: 1,
-                addedAt: new Date().toISOString()
-            };
-            
-            // Verificar se item já existe
-            const existingItem = this.items.find(item => item.name === productName);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                this.items.push(item);
-            }
-            
-            this.saveToStorage();
-            this.updateCartCount();
-            this.animateCart();
-            
-            notifications.show(`${productName} adicionado ao carrinho!`, 'success');
-        }
-        
-        removeItem(id) {
-            this.items = this.items.filter(item => item.id !== id);
-            this.saveToStorage();
-            this.updateCartCount();
-        }
-        
-        updateCartCount() {
-            const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
-            cartCountElement.textContent = totalItems;
-            
-            if (totalItems > 0) {
-                cartCountElement.style.display = 'flex';
-            } else {
-                cartCountElement.style.display = 'none';
-            }
-        }
-        
-        animateCart() {
-            cartIcon.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                cartIcon.style.transform = 'scale(1)';
-            }, 200);
-        }
-        
-        saveToStorage() {
-            localStorage.setItem('cartItems', JSON.stringify(this.items));
-        }
-        
-        getTotalPrice() {
-            return this.items.reduce((total, item) => {
-                const price = parseFloat(item.price.replace('R$ ', '').replace(',', ''));
-                return total + (price * item.quantity);
-            }, 0);
-        }
-    }
-    
-    const cart = new CartSystem();
-    
-    // Sistema de busca avançado
-    class SearchSystem {
-        constructor() {
-            this.searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-            this.setupSearch();
-        }
-        
-        setupSearch() {
-            searchBtn.addEventListener('click', () => this.performSearch());
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.performSearch();
-                }
-            });
-            
-            // Busca em tempo real
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                if (query.length > 2) {
-                    this.showSuggestions(query);
-                } else {
-                    this.hideSuggestions();
-                }
-            });
-        }
-        
-        performSearch() {
-            const query = searchInput.value.trim();
-            if (query) {
-                this.addToHistory(query);
-                notifications.show(`Buscando por: "${query}"`, 'info');
-                // Aqui você pode implementar a lógica de busca real
-                console.log('Buscando:', query);
-            }
-        }
-        
-        addToHistory(query) {
-            if (!this.searchHistory.includes(query)) {
-                this.searchHistory.unshift(query);
-                this.searchHistory = this.searchHistory.slice(0, 10); // Manter apenas 10 itens
-                localStorage.setItem('searchHistory', JSON.stringify(this.searchHistory));
-            }
-        }
-        
-        showSuggestions(query) {
-            // Implementar sugestões de busca
-            console.log('Sugestões para:', query);
-        }
-        
-        hideSuggestions() {
-            // Esconder sugestões
-        }
-    }
-    
-    const search = new SearchSystem();
-    
-    // Sistema de animações
-    class AnimationSystem {
-        constructor() {
-            this.setupScrollAnimations();
-            this.setupHoverAnimations();
-            this.setupLoadingAnimations();
-        }
-        
-        setupScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-in');
-                    }
-                });
-            }, observerOptions);
-            
-            // Observar elementos para animação
-            document.querySelectorAll('.product-item, .category-item').forEach(el => {
-                observer.observe(el);
-            });
-        }
-        
-        setupHoverAnimations() {
-            // Animações de hover nos produtos
-            document.querySelectorAll('.product-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-            
-            // Animações de hover nas categorias
-            document.querySelectorAll('.category-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.05)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-        }
-        
-        setupLoadingAnimations() {
-            // Animação de carregamento
-            window.addEventListener('load', () => {
-                document.body.classList.add('loaded');
-                notifications.show('Bem-vindo à Loja do Japão! 🎌', 'success', 5000);
-            });
-        }
-    }
-    
-    const animations = new AnimationSystem();
-    
-    // Sistema de scroll inteligente
-    class ScrollSystem {
-        constructor() {
-            this.lastScrollTop = 0;
-            this.setupScrollBehavior();
-        }
-        
-        setupScrollBehavior() {
-            let ticking = false;
-            
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    requestAnimationFrame(() => {
-                        this.handleScroll();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
-        
-        handleScroll() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Header behavior
-            if (scrollTop > this.lastScrollTop && scrollTop > 100) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-            
-            // Back to top button
-            if (scrollTop > 300) {
-                this.showBackToTop();
-            } else {
-                this.hideBackToTop();
-            }
-            
-            this.lastScrollTop = scrollTop;
-        }
-        
-        showBackToTop() {
-            if (!document.querySelector('.back-to-top')) {
-                const btn = document.createElement('button');
-                btn.className = 'back-to-top';
-                btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-                btn.style.cssText = `
-                    position: fixed;
-                    bottom: 100px;
-                    right: 2rem;
-                    background: var(--primary-color);
-                    color: white;
-                    border: none;
-                    width: 3rem;
-                    height: 3rem;
-                    border-radius: 50%;
-                    cursor: pointer;
-                    z-index: 1000;
-                    transition: all 0.3s ease;
-                    box-shadow: var(--shadow-lg);
-                `;
-                
-                btn.addEventListener('click', () => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-                
-                document.body.appendChild(btn);
-            }
-        }
-        
-        hideBackToTop() {
-            const btn = document.querySelector('.back-to-top');
-            if (btn) {
-                btn.remove();
-            }
-        }
-    }
-    
-    const scrollSystem = new ScrollSystem();
-    
-    // Event listeners para botões "Adicionar ao Carrinho"
-    addToCartBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const productItem = this.closest('.product-item');
-            const productName = productItem.querySelector('h3').textContent;
-            const productPrice = productItem.querySelector('.price').textContent;
-            const productImage = productItem.querySelector('.product-image img')?.src || '';
-            
-            cart.addItem(productName, productPrice, productImage);
-            
-            // Animação do botão
-            this.style.background = '#10b981';
-            this.textContent = 'Adicionado!';
-            setTimeout(() => {
-                this.style.background = '';
-                this.textContent = 'Adicionar ao Carrinho';
-            }, 1500);
-        });
-    });
-    
-    // Funcionalidade do WhatsApp
-    whatsappBtn.addEventListener('click', function() {
-        const message = 'Olá! Gostaria de saber mais sobre os produtos da Loja do Japão!';
-        const phoneNumber = '5511999999999';
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-    });
-    
-    // Funcionalidade da seta do banner
-    bannerArrow.addEventListener('click', function() {
-        notifications.show('Navegando para mais produtos...', 'info');
-    });
-    
-    // Funcionalidade dos departamentos
-    const departmentsBtn = document.querySelector('.departments-btn');
-    departmentsBtn.addEventListener('click', function() {
-        notifications.show('Menu de departamentos em breve!', 'info');
-    });
-    
-    // Funcionalidade dos links de navegação
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const category = this.querySelector('i').className;
-            notifications.show(`Navegando para categoria...`, 'info');
-        });
-    });
-    
-    // Funcionalidade dos botões especiais
-    const blogBtn = document.querySelector('.btn-blog');
-    const saleBtn = document.querySelector('.btn-sale');
-    
-    blogBtn.addEventListener('click', function() {
-        notifications.show('Redirecionando para o blog...', 'info');
-    });
-    
-    saleBtn.addEventListener('click', function() {
-        notifications.show('Mostrando promoções...', 'info');
-    });
-    
-    // Funcionalidade das categorias
-    const categoryItems = document.querySelectorAll('.category-item');
-    categoryItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const categoryName = this.querySelector('h3').textContent;
-            notifications.show(`Explorando categoria: ${categoryName}`, 'info');
-        });
-    });
-    
-    // Funcionalidade do botão "Conhecer todos"
-    const discoverBtn = document.querySelector('.btn-discover');
-    discoverBtn.addEventListener('click', function() {
-        notifications.show('Redirecionando para todos os produtos...', 'info');
-    });
-    
-    // Funcionalidade do botão "Assistir vídeo"
-    const watchBtn = document.querySelector('.btn-watch');
-    if (watchBtn) {
-        watchBtn.addEventListener('click', function() {
-            notifications.show('Abrindo vídeo...', 'info');
-        });
-    }
-    
-    // Sistema de teclado
-    document.addEventListener('keydown', function(e) {
-        // ESC para fechar notificações
-        if (e.key === 'Escape') {
-            const notifications = document.querySelectorAll('.notification');
-            notifications.forEach(notification => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            });
-        }
-        
-        // Enter para buscar
-        if (e.key === 'Enter' && document.activeElement === searchInput) {
-            searchBtn.click();
-        }
-        
-        // Ctrl + K para focar na busca
-        if (e.ctrlKey && e.key === 'k') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-    });
-    
-    // Sistema de responsividade
-    function handleResize() {
-        const width = window.innerWidth;
-        const isMobile = width < 768;
-        
-        // Ajustes para mobile
-        if (isMobile) {
-            document.body.classList.add('mobile');
-        } else {
-            document.body.classList.remove('mobile');
-        }
-    }
-    
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Executar na carga inicial
-    
-    // Adicionar transição suave ao header
-    header.style.transition = 'transform 0.3s ease-in-out';
-    
-    // Performance: Lazy loading para imagens
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    observer.unobserve(img);
-                }
-            });
-        });
-        
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-    
-    console.log('🎌 Loja do Japão - Site carregado com sucesso!');
-    console.log('🚀 Funcionalidades ativas:', {
-        notifications: '✅',
-        cart: '✅',
-        search: '✅',
-        animations: '✅',
-        scroll: '✅'
-    });
+    initializeDashboard();
+    generateHistoricalData();
+    updateDashboard();
+    setupCharts();
+    startRealTimeUpdates();
 });
+
+// Inicializar dashboard
+function initializeDashboard() {
+    updateAlerts();
+    updateSummaryCards();
+    renderTanks();
+    updateLastUpdateTime();
+}
+
+// Atualizar alertas
+function updateAlerts() {
+    const alertsGrid = document.getElementById('alertsGrid');
+    const alerts = [];
+    
+    tanksData.forEach(tank => {
+        if (tank.status === 'critical') {
+            alerts.push({
+                type: 'critical',
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Nível Crítico',
+                message: `${tank.name} está com apenas ${tank.level}% de capacidade`,
+                time: tank.lastUpdate
+            });
+        } else if (tank.status === 'warning') {
+            alerts.push({
+                type: 'warning',
+                icon: 'fas fa-exclamation-circle',
+                title: 'Nível Baixo',
+                message: `${tank.name} está com ${tank.level}% de capacidade`,
+                time: tank.lastUpdate
+            });
+        }
+    });
+    
+    // Adicionar alertas do sistema
+    alerts.push({
+        type: 'info',
+        icon: 'fas fa-info-circle',
+        title: 'Sistema Ativo',
+        message: 'Todos os sensores ESP32 estão funcionando normalmente',
+        time: 'Agora'
+    });
+    
+    alertsGrid.innerHTML = alerts.map(alert => `
+        <div class="alert-card alert-${alert.type}">
+            <i class="${alert.icon}"></i>
+            <div>
+                <h4>${alert.title}</h4>
+                <p>${alert.message}</p>
+                <small>${alert.time}</small>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Atualizar cards de resumo
+function updateSummaryCards() {
+    const totalTanks = tanksData.length;
+    const activeAlerts = tanksData.filter(tank => tank.status === 'critical' || tank.status === 'warning').length;
+    const averageLevel = Math.round(tanksData.reduce((sum, tank) => sum + tank.level, 0) / totalTanks);
+    const overallStatus = activeAlerts === 0 ? 'Normal' : activeAlerts <= 2 ? 'Atenção' : 'Crítico';
+    
+    document.getElementById('totalTanks').textContent = totalTanks;
+    document.getElementById('activeAlerts').textContent = activeAlerts;
+    document.getElementById('averageLevel').textContent = averageLevel + '%';
+    
+    const statusElement = document.querySelector('#activeAlerts').parentElement.parentElement.querySelector('.card-value');
+    statusElement.textContent = overallStatus;
+    statusElement.className = `card-value status-${overallStatus.toLowerCase()}`;
+}
+
+// Renderizar tanques
+function renderTanks() {
+    const tanksGrid = document.getElementById('tanksGrid');
+    
+    tanksGrid.innerHTML = tanksData.map(tank => `
+        <div class="tank-card ${tank.status}">
+            <div class="tank-header">
+                <h3 class="tank-name">${tank.name}</h3>
+                <span class="tank-status ${tank.status}">
+                    ${tank.status === 'critical' ? 'Crítico' : 
+                      tank.status === 'warning' ? 'Atenção' : 'Normal'}
+                </span>
+            </div>
+            
+            <div class="tank-level">
+                <div class="level-label">
+                    <span>Nível de Água</span>
+                    <span>${tank.level}%</span>
+                </div>
+                <div class="level-bar">
+                    <div class="level-fill ${tank.status}" style="width: ${tank.level}%">
+                        <span class="level-percentage">${tank.level}%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tank-info">
+                <div class="tank-info-item">
+                    <span>Capacidade:</span>
+                    <span>${tank.capacity.toLocaleString()}L</span>
+                </div>
+                <div class="tank-info-item">
+                    <span>Localização:</span>
+                    <span>${tank.location}</span>
+                </div>
+                <div class="tank-info-item">
+                    <span>Atualização:</span>
+                    <span>${tank.lastUpdate}</span>
+                </div>
+                <div class="tank-info-item">
+                    <span>Volume Atual:</span>
+                    <span>${Math.round(tank.capacity * tank.level / 100).toLocaleString()}L</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Gerar dados históricos simulados
+function generateHistoricalData() {
+    const now = new Date();
+    const hours = [];
+    const levels = [];
+    const consumption = [];
+    
+    // Gerar dados das últimas 24 horas
+    for (let i = 23; i >= 0; i--) {
+        const time = new Date(now.getTime() - i * 60 * 60 * 1000);
+        hours.push(time.getHours() + ':00');
+        
+        // Simular variação de nível
+        const baseLevel = 70 + Math.sin(i * 0.3) * 20;
+        levels.push(Math.max(0, Math.min(100, baseLevel + (Math.random() - 0.5) * 10)));
+        
+        // Simular consumo
+        consumption.push(Math.round(1000 + Math.random() * 2000));
+    }
+    
+    historicalData.levels = { hours, levels };
+    historicalData.consumption = { hours, consumption };
+}
+
+// Configurar gráficos
+function setupCharts() {
+    setupLevelChart();
+    setupConsumptionChart();
+}
+
+// Gráfico de nível de água
+function setupLevelChart() {
+    const ctx = document.getElementById('levelChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: historicalData.levels.hours,
+            datasets: [{
+                label: 'Nível de Água (%)',
+                data: historicalData.levels.levels,
+                borderColor: '#2196F3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#2196F3',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            elements: {
+                point: {
+                    hoverRadius: 8
+                }
+            }
+        }
+    });
+}
+
+// Gráfico de consumo
+function setupConsumptionChart() {
+    const ctx = document.getElementById('consumptionChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: historicalData.consumption.hours,
+            datasets: [{
+                label: 'Consumo (L/h)',
+                data: historicalData.consumption.consumption,
+                backgroundColor: 'rgba(76, 175, 80, 0.8)',
+                borderColor: '#4CAF50',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + 'L';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Atualizar dashboard
+function updateDashboard() {
+    // Simular pequenas variações nos dados
+    tanksData.forEach(tank => {
+        const variation = (Math.random() - 0.5) * 2;
+        tank.level = Math.max(0, Math.min(100, tank.level + variation));
+        
+        // Atualizar status baseado no nível
+        if (tank.level < 20) {
+            tank.status = 'critical';
+        } else if (tank.level < 40) {
+            tank.status = 'warning';
+        } else {
+            tank.status = 'normal';
+        }
+        
+        tank.lastUpdate = Math.floor(Math.random() * 5) + 1 + ' min atrás';
+    });
+    
+    updateAlerts();
+    updateSummaryCards();
+    renderTanks();
+    updateLastUpdateTime();
+}
+
+// Atualizar tempo da última atualização
+function updateLastUpdateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR');
+    document.getElementById('lastUpdate').textContent = `Última atualização: ${timeString}`;
+}
+
+// Iniciar atualizações em tempo real
+function startRealTimeUpdates() {
+    // Atualizar a cada 30 segundos
+    setInterval(updateDashboard, 30000);
+    
+    // Atualizar tempo a cada minuto
+    setInterval(updateLastUpdateTime, 60000);
+}
+
+// Adicionar efeitos visuais
+function addVisualEffects() {
+    // Adicionar animação de fade-in aos cards
+    const cards = document.querySelectorAll('.tank-card, .summary-card, .alert-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in');
+    });
+}
+
+// Simular recebimento de dados do ESP32
+function simulateESP32Data() {
+    // Simular dados que viriam do sensor ultrassônico
+    const sensorData = {
+        tankId: Math.floor(Math.random() * 5) + 1,
+        distance: Math.random() * 200 + 50, // Distância em cm
+        timestamp: new Date().toISOString(),
+        temperature: 25 + Math.random() * 10, // Temperatura ambiente
+        humidity: 60 + Math.random() * 20 // Umidade
+    };
+    
+    // Converter distância em nível de água
+    const tankHeight = 300; // Altura do tanque em cm
+    const waterLevel = Math.max(0, Math.min(100, 
+        ((tankHeight - sensorData.distance) / tankHeight) * 100
+    ));
+    
+    // Atualizar dados do tanque correspondente
+    const tank = tanksData.find(t => t.id === sensorData.tankId);
+    if (tank) {
+        tank.level = Math.round(waterLevel);
+        tank.lastUpdate = 'Agora';
+        
+        // Atualizar status
+        if (tank.level < 20) {
+            tank.status = 'critical';
+        } else if (tank.level < 40) {
+            tank.status = 'warning';
+        } else {
+            tank.status = 'normal';
+        }
+    }
+    
+    return sensorData;
+}
+
+// Adicionar funcionalidade de notificações
+function showNotification(message, type = 'info') {
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 
+                        type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Adicionar estilos
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4CAF50' : 
+                    type === 'error' ? '#f44336' : 
+                    type === 'warning' ? '#ff9800' : '#2196F3'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+// Adicionar CSS para animações de notificação
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(notificationStyles);
+
+// Simular alertas críticos
+function simulateCriticalAlert() {
+    const criticalTanks = tanksData.filter(tank => tank.status === 'critical');
+    if (criticalTanks.length > 0) {
+        showNotification(
+            `ALERTA: ${criticalTanks[0].name} está com nível crítico!`, 
+            'error'
+        );
+    }
+}
+
+// Inicializar simulações
+setTimeout(() => {
+    addVisualEffects();
+    simulateCriticalAlert();
+}, 1000);
+
+// Simular dados do ESP32 a cada 10 segundos
+setInterval(() => {
+    const sensorData = simulateESP32Data();
+    console.log('Dados recebidos do ESP32:', sensorData);
+}, 10000);

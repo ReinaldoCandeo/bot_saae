@@ -1,0 +1,63 @@
+🔗 ==========================================
+   INTEGRAR COM WHATSAPP BUSINESS
+==========================================
+
+📋 VOCÊ TEM 2 OPÇÕES:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ OPÇÃO 1: SCRIPT AUTOMÁTICO (Recomendado!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cole no terminal:
+
+  cd /Users/reinaldocandeo/Desktop/Postman
+  ./configurar-whatsapp.sh
+
+O script faz quase tudo sozinho!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 OPÇÃO 2: MANUAL (Passo a Passo)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Leia o guia completo:
+
+  cat INTEGRAR_WHATSAPP_BUSINESS.md | less
+
+Ou abra no editor:
+
+  open INTEGRAR_WHATSAPP_BUSINESS.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 GUIAS DISPONÍVEIS:
+
+1. INTEGRAR_WHATSAPP_BUSINESS.md
+   → Guia completo com prints e explicações
+
+2. INICIO_RAPIDO_WHATSAPP.md  
+   → Versão resumida do processo
+
+3. configurar-whatsapp.sh
+   → Script que faz tudo automaticamente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  ANTES DE COMEÇAR:
+
+Você precisa ter:
+✓ Conta no Meta for Developers
+✓ Número de telefone
+✓ 3 credenciais (Phone ID, Token, Verify Token)
+
+Se não tem as credenciais ainda:
+→ Veja INTEGRAR_WHATSAPP_BUSINESS.md (PASSO 1 e 2)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 COMECE AGORA:
+
+  ./configurar-whatsapp.sh
+
+==========================================
